@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"target": "es2018",
+		"module": "commonjs",
+		"lib": ["es2018", "esnext.asynciterable", "ESNext"],
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"outDir": "dist"
+	},
+	"include": ["src/**/*.ts", "src/**/*.tsx"]
+}
