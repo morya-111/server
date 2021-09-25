@@ -3,35 +3,37 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	OneToOne,
-	JoinColumn,
 	BaseEntity,
 } from "typeorm";
 import { Address } from "./Address";
+import { Auth } from "./Auth";
+import { IsDefined, IsEmail } from "class-validator";
 
 @Entity()
 export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@IsDefined({ message: "First Name is required." })
 	@Column({ length: 30 })
 	first_name: string;
 
+	@IsDefined({ message: "Last Name is required." })
 	@Column({ length: 30 })
 	last_name: string;
 
+	@IsDefined({ message: "Email is required." })
+	@IsEmail()
 	@Column({ length: 200, unique: true })
 	email: string;
 
+	@IsDefined()
 	@Column({ length: 20 }) // This can be later set to enum when all roles are finalized
 	role: string;
 
-	@Column({ length: 50 })
-	google_id: string;
+	@OneToOne(() => Auth, (auth) => auth.user)
+	auth: Auth;
 
-	@Column({ length: 50 })
-	twitter_id: string;
-
-	@OneToOne(() => Address, { nullable: true })
-	@JoinColumn()
+	@OneToOne(() => Address, (address) => address.user)
 	address: Address;
 }

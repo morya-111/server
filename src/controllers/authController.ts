@@ -1,0 +1,145 @@
+import { compare } from "bcryptjs";
+import { validate } from "class-validator";
+import { CookieOptions, RequestHandler, Response } from "express";
+import jwt from "jsonwebtoken";
+import { getConnection } from "typeorm";
+import { Address } from "../entity/Address";
+import { Auth } from "../entity/Auth";
+import { User } from "../entity/User";
+import { RoleType } from "../types";
+import AppError from "../utils/AppError";
+
+const signToken = (id: number) =>
+	jwt.sign({ id }, process.env.JWT_SECRET, {
+		expiresIn: parseInt(process.env.JWT_EXPIRES_IN) * 24 * 60 * 60 * 1000,
+	});
+
+const createAndSendToken = (user: User, statusCode: number, res: Response) => {
+	const token = signToken(user.id);
+
+	const cookieOptions: CookieOptions = {
+		expires: new Date(
+			Date.now() +
+				parseInt(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000
+		),
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+	};
+
+	res.cookie("jwt", token, cookieOptions);
+
+	user.auth = undefined;
+	res.status(statusCode).json({
+		status: "success",
+		data: {
+			user,
+		},
+	});
+};
+
+export const register: RequestHandler = async (req, res, next) => {
+	const {
+		first_name,
+		last_name,
+		email,
+		password,
+		address,
+		city,
+		state,
+		pincode,
+	} = req.body;
+
+	let user = User.create({ first_name, last_name, email, role: "INDIVIDUAL" });
+
+	// validate user
+	let errors = await validate(user);
+	if (errors.length > 0)
+		return next(new AppError("Validation Error", 400, errors));
+
+	const existingUser = await getConnection()
+		.getRepository(User)
+		.createQueryBuilder("user")
+		.where("user.email = :email", { email })
+		.getOne();
+
+	if (existingUser) return next(new AppError("Email already exists.", 409));
+
+	const auth = Auth.create({ password });
+
+	// validate auth
+	errors = await validate(auth);
+	if (errors.length > 0)
+		return next(new AppError("Validation Error", 400, errors));
+
+	await auth.save();
+	user.auth = auth;
+
+	if (address || city || state || pincode) {
+		const newAddress = Address.create({ address, city, state, pincode });
+
+		// validate address
+		errors = await validate(newAddress);
+		if (errors.length > 0)
+			return next(new AppError("Validation Error", 400, errors));
+
+		await newAddress.save();
+		user.address = newAddress;
+	}
+
+	user = await user.save();
+	createAndSendToken(user, 200, res);
+};
+
+export const login: RequestHandler = async (req, res, next) => {
+	const { email, password } = req.body;
+
+	if (!email || !password)
+		return next(new AppError("Email and password is required.", 400));
+
+	const existingUser = await getConnection()
+		.getRepository(User)
+		.createQueryBuilder("user")
+		.leftJoinAndSelect("user.auth", "auth")
+		.where("user.email = :email", { email })
+		.getOne();
+
+	if (existingUser && existingUser.auth.password === null)
+		return next(new AppError("Email is associated with social login.", 403));
+
+	if (!existingUser || !(await compare(password, existingUser.auth.password)))
+		return next(new AppError("Incorrect email or password", 401));
+
+	createAndSendToken(existingUser, 200, res);
+};
+
+export const logout: RequestHandler = (_, res) => {
+	res.clearCookie("jwt").sendStatus(200);
+};
+
+export const protect =
+	(roles?: RoleType[]): RequestHandler =>
+	async (req, _, next) => {
+		const token = req.cookies.jwt;
+
+		if (!token)
+			return next(
+				new AppError("You are not logged in. Please login to get access.", 401)
+			);
+
+		const parsed = jwt.verify(token, process.env.JWT_SECRET) as { id: number };
+
+		const user = await User.findOne(parsed.id);
+
+		if (!user)
+			return next(
+				new AppError("User related to this session does not exist", 401)
+			);
+
+		if (roles && !roles.includes(user.role as RoleType))
+			return next(
+				new AppError("You don't have permission to access this resource", 401)
+			);
+
+		req.user = user;
+		next();
+	};
