@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import morgan from "morgan";
 import bookRouter from "./routes/bookRoutes";
+import imageRouter from "./routes/imageRoutes";
 const app = express();
 
 const { LATENCY = "0" } = process.env;
@@ -15,6 +16,7 @@ app.use((_, __, next) => {
 });
 
 app.use("/books", bookRouter);
+app.use("/images", imageRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({
