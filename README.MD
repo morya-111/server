@@ -1,6 +1,6 @@
 # Server
 
-<img src="./er-diagram.drawio.svg" />
+<img src="./er-diagram.svg" />
 
 # API Reference
 
@@ -46,6 +46,10 @@
     - `200` - User logged in successfully 
 
 - **POST** `/v1/user/logout` - Logout the current user
+  
+- **GET** `/v1/auth/google` - Login with google
+
+- **GET** `/v1/auth/facebook` - Login with facebook
 
 ---
 ## Developer Notes
@@ -70,3 +74,9 @@
 	    res.status(200).json({ status: "success" });
     });
     ```
+- OAuth Client redirect url and path
+  > Set `FRONTEND_CLIENT` env variable to frontend clients host url
+  > 
+  > Set `SUCCESS_ROUTE` env variable to path to which the user should be redirected on OAuth success.
+  >
+  > Set `FAILURE_ROUTE` env variable to path to which user should be redirected on OAuth failure.

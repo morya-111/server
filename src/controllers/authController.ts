@@ -1,6 +1,6 @@
 import { compare } from "bcryptjs";
 import { validate } from "class-validator";
-import { CookieOptions, RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import { getConnection } from "typeorm";
 import { Address } from "../entity/Address";
@@ -8,34 +8,7 @@ import { Auth } from "../entity/Auth";
 import { User } from "../entity/User";
 import { RoleType } from "../types";
 import AppError from "../utils/AppError";
-
-const signToken = (id: number) =>
-	jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: parseInt(process.env.JWT_EXPIRES_IN) * 24 * 60 * 60 * 1000,
-	});
-
-const createAndSendToken = (user: User, statusCode: number, res: Response) => {
-	const token = signToken(user.id);
-
-	const cookieOptions: CookieOptions = {
-		expires: new Date(
-			Date.now() +
-				parseInt(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000
-		),
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-	};
-
-	res.cookie("jwt", token, cookieOptions);
-
-	user.auth = undefined;
-	res.status(statusCode).json({
-		status: "success",
-		data: {
-			user,
-		},
-	});
-};
+import { createAndSendToken } from "../utils/auth";
 
 export const register: RequestHandler = async (req, res, next) => {
 	const {
@@ -71,8 +44,7 @@ export const register: RequestHandler = async (req, res, next) => {
 	if (errors.length > 0)
 		return next(new AppError("Validation Error", 400, errors));
 
-	await auth.save();
-	user.auth = auth;
+	user = await user.save();
 
 	if (address || city || state || pincode) {
 		const newAddress = Address.create({ address, city, state, pincode });
@@ -82,11 +54,12 @@ export const register: RequestHandler = async (req, res, next) => {
 		if (errors.length > 0)
 			return next(new AppError("Validation Error", 400, errors));
 
+		newAddress.user = user;
 		await newAddress.save();
-		user.address = newAddress;
 	}
 
-	user = await user.save();
+	auth.user = user;
+	auth.save();
 	createAndSendToken(user, 200, res);
 };
 

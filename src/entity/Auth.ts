@@ -24,7 +24,7 @@ export class Auth extends BaseEntity {
 	google_id: string;
 
 	@Column({ length: 50, nullable: true })
-	twitter_id: string;
+	facebook_id: string;
 
 	@OneToOne((type) => User, (user) => user.auth, { onDelete: "CASCADE" })
 	@JoinColumn()
