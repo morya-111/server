@@ -20,12 +20,11 @@ export const getAllBooks = async (req: Request, res: Response) => {
 
 export const newBook: RequestHandler = async (req: Request, res: Response) => {
   try {
-    console.log("Posted A New Book");
-
     const book = Book.create({ ...req.body });
 
     await Book.save(book);
 
+    console.log(`Posted A New Book :  ${req.body.name}`);
     res.status(200).json({
       msg: "Book posted into db",
       data: book,
