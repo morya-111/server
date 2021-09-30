@@ -59,7 +59,7 @@ export const register: RequestHandler = async (req, res, next) => {
 	}
 
 	auth.user = user;
-	auth.save();
+	await auth.save();
 	createAndSendToken(user, 200, res);
 };
 
