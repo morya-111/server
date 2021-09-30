@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import bookRouter from "./routes/bookRoutes";
+
 import userRouter from "./routes/userRoutes";
 import googleAuthRouter from "./routes/googleAuthRoutes";
 import facebookAuthRouter from "./routes/facebookAuthRoutes";
@@ -12,6 +13,9 @@ import globalErrorhandler from "./controllers/errorController";
 import { protect } from "./controllers/authController";
 import configureGoogleAuth from "./utils/configureGoogleAuth";
 import configureFacebookAuth from "./utils/configureFacebookAuth";
+
+
+import imageRouter from "./routes/imageRoutes";
 
 const app = express();
 
@@ -35,6 +39,7 @@ configureGoogleAuth();
 configureFacebookAuth();
 
 app.use("/books", bookRouter);
+app.use("/images", imageRouter);
 
 app.use("/v1/user", userRouter);
 
