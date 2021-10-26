@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   BaseEntity,
+  JoinColumn,
 } from "typeorm";
 import { Book } from "./Book";
 
@@ -20,5 +21,6 @@ export class Image extends BaseEntity {
   label: string;
 
   @ManyToOne((type) => Book, (book) => book.images)
+  @JoinColumn()
   book: Book;
 }
