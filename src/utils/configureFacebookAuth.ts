@@ -11,8 +11,6 @@ let callbackUrl = "/v1/auth/facebook/callback";
 if (process.env.NODE_ENV === "development")
 	callbackUrl = `http://localhost:${PORT}${callbackUrl}`;
 
-console.log(callbackUrl);
-
 const configureFacebookAuth = () => {
 	passport.use(
 		new FacebookStrategy(

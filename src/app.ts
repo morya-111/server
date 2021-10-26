@@ -1,3 +1,5 @@
+import { config } from "dotenv";
+config();
 import express, { json } from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
