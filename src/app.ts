@@ -2,6 +2,7 @@ import express, { json } from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import cors from "cors";
 import bookRouter from "./routes/bookRoutes";
 
 import userRouter from "./routes/userRoutes";
@@ -12,20 +13,20 @@ import { protect } from "./controllers/authController";
 import configureGoogleAuth from "./utils/configureGoogleAuth";
 import configureFacebookAuth from "./utils/configureFacebookAuth";
 
-
 import imageRouter from "./routes/imageRoutes";
 
 const app = express();
 
 const { LATENCY = "0" } = process.env;
 
+app.use(cors());
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(json());
 app.use((_, __, next) => {
-	setTimeout(() => {
-		next();
-	}, parseInt(LATENCY));
+  setTimeout(() => {
+    next();
+  }, parseInt(LATENCY));
 });
 
 app.use(cookieParser());
@@ -36,8 +37,8 @@ configureGoogleAuth();
 
 configureFacebookAuth();
 
-app.use("/books", bookRouter);
-app.use("/images", imageRouter);
+app.use("/v1/books", bookRouter);
+app.use("/v1/images", imageRouter);
 
 app.use("/v1/user", userRouter);
 
@@ -48,17 +49,17 @@ app.use("/v1/auth/facebook", facebookAuthRouter);
 // TEST ROUTES
 
 app.get("/v1/loginprotected", protect(), (_, res) => {
-	res.status(200).json({ status: "success" });
+  res.status(200).json({ status: "success" });
 });
 
 app.get("/v1/roleprotected", protect(["ADMIN"]), (_, res) => {
-	res.status(200).json({ status: "success" });
+  res.status(200).json({ status: "success" });
 });
 
 app.get("/", (req, res) => {
-	res.status(200).json({
-		status: "success",
-	});
+  res.status(200).json({
+    status: "success",
+  });
 });
 
 app.use(globalErrorhandler);
