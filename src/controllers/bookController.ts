@@ -8,7 +8,7 @@ export const getAllBooks = async (req: Request, res: Response) => {
   try {
     console.log("Requested All Books");
 
-    const allBooks = await Book.find();
+    const allBooks = await Book.find({ relations: ["images", "language"] });
 
     res.status(200).json({
       ...allBooks,

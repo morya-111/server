@@ -1,26 +1,28 @@
 import {
   Entity,
   Column,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
   OneToMany,
   BaseEntity,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { Image } from "./Image";
+import { Language } from "./Language";
 
 @Entity()
 export class Book extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100 }) // by default NULLABLE: false
+  @Column({ length: 300 }) // by default NULLABLE: false
   name: string;
 
   @Column({ length: 1000, nullable: true })
   description: string;
 
   @Column({ length: 50 })
-  language: string;
+  genre: string;
 
   @Column({ length: 100 })
   author: string;
@@ -30,4 +32,10 @@ export class Book extends BaseEntity {
 
   @OneToMany((type) => Image, (image) => image.book)
   images: Image[];
+
+  @ManyToOne((type) => Language, (language) => language.books, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn()
+  language: Language;
 }
