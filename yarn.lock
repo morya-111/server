@@ -3806,6 +3806,11 @@ typedarray@^0.0.6:
   resolved "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+typeorm-express-query-builder@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/typeorm-express-query-builder/-/typeorm-express-query-builder-1.5.0.tgz#b1a6ab740f483ffe156cbac15bcd82ec8fbc9cd8"
+  integrity sha512-OD8qOalmw/fY/JvJzosc2NvQTH2iTmA7Kz944FWLg8BjcQQpL4g1hPflIEfn6NnO8YTwjWwtSzR1eTqP0KtlqQ==
+
 typeorm@^0.2.37:
   version "0.2.37"
   resolved "https://registry.npmjs.org/typeorm/-/typeorm-0.2.37.tgz"

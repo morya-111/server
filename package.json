@@ -44,7 +44,8 @@
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.37"
+    "typeorm": "^0.2.37",
+    "typeorm-express-query-builder": "^1.5.0"
   },
   "scripts": {
     "start-dev": "tsnd --respawn src/index.ts",
