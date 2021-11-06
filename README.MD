@@ -1,6 +1,6 @@
 # Server
-
-<img src="./er-diagram.svg" />
+[![CI](https://github.com/morya-111/server/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/morya-111/server/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/morya-111/server/branch/main/graph/badge.svg?token=AL2UQA6DDR)](https://codecov.io/gh/morya-111/server)
 
 # API Reference
 
@@ -82,3 +82,5 @@
   > Set `SUCCESS_ROUTE` env variable to path to which the user should be redirected on OAuth success.
   >
   > Set `FAILURE_ROUTE` env variable to path to which user should be redirected on OAuth failure.
+
+<img src="./er-diagram.svg" />
