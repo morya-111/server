@@ -34,7 +34,7 @@ jobs:
       with:
         node-version: '14'
     - name: Install tsc
-      uses: icrawl/action-tsc@v1
+      run : yarn add -G typescript
     - name : Install Dependency
       run: yarn
     - name : Run Test
