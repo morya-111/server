@@ -4,8 +4,6 @@ import ApiFeatures from "../utils/ApiFeatures";
 
 export const getAllBooks = async (req: Request, res: Response) => {
   try {
-    console.log("Requested All Books");
-
     const features = new ApiFeatures(req.query, {
       ordering: false,
       select: false,

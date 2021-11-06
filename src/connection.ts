@@ -14,8 +14,6 @@ const connection = {
     const entities = getConnection().entityMetadatas;
 
     for (const entity of entities) {
-      console.log(entity.name);
-
       const repository = getConnection().getRepository(entity.name); // Get repository
       await repository.delete({}); // Clear each entity table's content
     }
