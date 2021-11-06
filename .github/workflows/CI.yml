@@ -33,6 +33,8 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '14'
+    - name: Install tsc
+      uses: icrawl/action-tsc@v1
     - name : Install Dependency
       run: yarn
     - name : Run Test
