@@ -1,9 +1,13 @@
 import connection from "./src/connection";
 
-beforeEach(async () => {
-	await connection.create();
+beforeAll(async () => {
+  await connection.create();
 });
 
-afterEach(async () => {
-	await connection.close();
+afterAll(async () => {
+  await connection.close();
+});
+
+beforeEach(async () => {
+  await connection.clear();
 });

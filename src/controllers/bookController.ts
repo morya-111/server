@@ -1,17 +1,25 @@
 import { Request, Response, RequestHandler } from "express";
-// import { getConnection } from "typeorm";
 import { Book } from "../entity/Book";
-
-// const bookRepo = connection.getRepository(Book).find();
+import ApiFeatures from "../utils/ApiFeatures";
 
 export const getAllBooks = async (req: Request, res: Response) => {
   try {
-    console.log("Requested All Books");
+    const features = new ApiFeatures(req.query, {
+      ordering: false,
+      select: false,
+    });
 
-    const allBooks = await Book.find();
+    const books = await Book.findAndCount({
+      ...features.builtQuery,
+      relations: ["language", "images"],
+    });
 
     res.status(200).json({
-      ...allBooks,
+      status: "success",
+      data: {
+        books: books[0],
+        pagination: features.paginationInfo(books[1]),
+      },
     });
   } catch (error) {
     console.log(error);
