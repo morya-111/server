@@ -34,7 +34,7 @@ jobs:
       with:
         node-version: '14'
     - name: Install tsc
-      run : yarn add -G typescript
+      run : yarn global add typescript
     - name : Install Dependency
       run: yarn
     - name : Run Test
