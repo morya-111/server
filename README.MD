@@ -4,7 +4,9 @@
 
 # API Reference
 
-- **GET** `localhost:4000/books/allBooks` - Get All Books
+- **GET** `localhost:4000/books/` - Get All Books
+
+    Use this [link](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups) for all the filtering and pagination that can be done on this route.
 
 - **POST** `localhost:4000/books/newBook` - Post A new Book
 
