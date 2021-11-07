@@ -19,9 +19,10 @@ import imageRouter from "./routes/imageRoutes";
 
 const app = express();
 
-const { LATENCY = "0" } = process.env;
+const { LATENCY = "0", FRONTEND_CLIENT = "http://localhost:3000" } =
+  process.env;
 
-app.use(cors());
+app.use(cors({ credentials: true, origin: FRONTEND_CLIENT }));
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(json());

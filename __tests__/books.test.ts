@@ -156,5 +156,20 @@ describe("GET /v1/books", () => {
         isNext: true,
       });
     });
+
+    test("should have total pages", async () => {
+      const res = await request.get("/v1/books").query({
+        page: 1,
+      });
+
+      expect(res.body.data.pagination).toMatchObject({
+        page: 1,
+        limit: 25,
+        isPrevious: false,
+        nextPage: 2,
+        isNext: true,
+        pages: 2,
+      });
+    });
   });
 });

@@ -68,6 +68,7 @@ class ApiFeatures {
       nextPage: endIndex < entityCount ? page + 1 : undefined,
       isPrevious: page - 1 > 0,
       isNext: endIndex < entityCount,
+      pages: Math.ceil(entityCount / limit),
     };
   };
 }
