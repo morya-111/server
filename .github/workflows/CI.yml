@@ -1,0 +1,59 @@
+name: CI
+on : 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  running-tests:
+    runs-on: ubuntu-latest
+
+    # runs all of the steps inside the specified container rather than on the VM host.
+    # Because of this the network configuration changes from host based network to a container network.
+    container:
+      image:  node:10.18-jessie
+
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Install tsc
+      run : yarn global add typescript
+    - name : Install Dependency
+      run: yarn
+    - name : Run Test
+      run: yarn test
+      env:
+        # use postgres for the host here because we have specified a container for the job.
+        # If we were running the job on the VM this would be localhost
+        DATABASE_HOST: postgres
+        DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
+        DATABASE_USERNAME : postgres
+        DATABASE_PASSWORD : postgres
+        JWT_SECRET : ${{secrets.JWT_SECRET}}
+        JWT_EXPIRES_IN : 7
+        GOOGLE_CLIENT_ID : ${{secrets.GOOGLE_CLIENT_ID}}
+        GOOGLE_CLIENT_SECRET : ${{secrets.GOOGLE_CLIENT_SECRET}}
+        FACEBOOK_APP_ID :  ${{secrets.FACEBOOK_APP_ID}}
+        FACEBOOK_APP_SECRET : ${{secrets.FACEBOOK_APP_SECRET}}
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_SECRET }}
