@@ -9,10 +9,10 @@ import { Language } from "./entity/Language";
 const MAX_ROWS_TO_INSERT = 100;
 
 const GENRE = [
-  "action and adventure",
+  "adventure",
   "classics",
-  "comic book or graphic novel",
-  "detective and mystery",
+  "comic book",
+  "mystery",
   "fantasy",
   "historical fiction",
   "horror",
@@ -20,8 +20,8 @@ const GENRE = [
   "romance",
   "science fiction",
   "short stories",
-  "suspense and thrillers",
-  "biographies and autobiographies",
+  "suspense",
+  "non fiction",
   "history",
   "memoir",
   "poetry",
