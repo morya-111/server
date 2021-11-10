@@ -6,7 +6,7 @@ import { Image } from "./entity/Image";
 import { Book } from "./entity/Book";
 import { Language } from "./entity/Language";
 
-const MAX_ROWS_TO_INSERT = 100;
+const MAX_ROWS_TO_INSERT = 300;
 
 const GENRE = [
   "adventure",
@@ -28,7 +28,8 @@ const GENRE = [
   "self help",
 ];
 
-const LANGUAGES = ["english", "marathi", "french", "spanish", "tamil", "urdu"];
+const PRIORITY_LANGUAGES = ["english", "marathi", "hindi"];
+const LANGUAGES = ["french", "spanish", "tamil", "urdu", "dutch", "hebrew"];
 
 (async () => {
   await connection.create();
@@ -40,6 +41,13 @@ const LANGUAGES = ["english", "marathi", "french", "spanish", "tamil", "urdu"];
   for (let i = 0; i < LANGUAGES.length; i++) {
     const element = LANGUAGES[i];
     const lang = await Language.create({ name: element }).save();
+
+    languageObjects.push(lang);
+  }
+
+  for (let i = 0; i < PRIORITY_LANGUAGES.length; i++) {
+    const element = PRIORITY_LANGUAGES[i];
+    const lang = await Language.create({ name: element, priority: 1 }).save();
 
     languageObjects.push(lang);
   }

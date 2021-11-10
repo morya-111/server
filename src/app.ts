@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import cors from "cors";
 import bookRouter from "./routes/bookRoutes";
-
+import languageRouter from "./routes/languageRoutes";
 import userRouter from "./routes/userRoutes";
 import googleAuthRouter from "./routes/googleAuthRoutes";
 import facebookAuthRouter from "./routes/facebookAuthRoutes";
@@ -42,6 +42,7 @@ configureFacebookAuth();
 
 app.use("/v1/books", bookRouter);
 app.use("/v1/images", imageRouter);
+app.use("/v1/languages", languageRouter);
 
 app.use("/v1/user", userRouter);
 

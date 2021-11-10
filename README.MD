@@ -4,12 +4,18 @@
 
 # API Reference
 
-- **GET** `localhost:4000/books/` - Get All Books
+### Book Routes
 
-    Use this [link](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups) for all the filtering and pagination that can be done on this route.
+- **GET** `/v1/books` - Get All Books
 
-- **POST** `localhost:4000/books/newBook` - Post A new Book
+    Pagination [Enabled](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups) 
 
+- **POST** `/v1/books/newBook` - Post A new Book
+
+### Language Routes
+- **GET** `/v1/languages` - Get All Languages
+    
+    Ordering [Enabled](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups) 
 ### Auth Routes
 
 - **POST** `/v1/user/register` - Register a user

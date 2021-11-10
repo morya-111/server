@@ -15,6 +15,9 @@ export class Language extends BaseEntity {
   @Column({ length: 100 })
   name: string;
 
+  @Column({ default: 0 })
+  priority: number;
+
   @OneToMany((type) => Book, (book) => book.language)
   books: Book[];
 }
