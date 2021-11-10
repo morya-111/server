@@ -48,6 +48,10 @@
     - `200` - User logged in successfully 
 
 - **POST** `/v1/user/logout` - Logout the current user
+
+- **GET** `/v1/user/login` - Checks if the current user is logged in
+
+    - `401` - You are not logged in / User does not exist / You don't have permission to access this resource
   
 - **GET** `/v1/auth/google` - Login with google
 
