@@ -15,6 +15,6 @@ userRouter.post("/login", login);
 
 userRouter.post("/logout", logout);
 
-userRouter.get("/login", protect(), isLoggedIn);
+userRouter.get("/isloggedin", protect(), isLoggedIn);
 
 export default userRouter;

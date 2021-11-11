@@ -115,7 +115,7 @@ describe("POST /v1/user/login", () => {
 
 describe("GET /v1/user/login", () => {
   test("should not be logged if JWT is not present", async () => {
-    const res = await request.get("/v1/user/login");
+    const res = await request.get("/v1/user/isloggedin");
 
     expect(res.statusCode).toBe(401);
   });
