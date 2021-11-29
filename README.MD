@@ -10,6 +10,12 @@
 
     Pagination [Enabled](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups) 
 
+- **GET** `/v1/books/:id` - Get Book By Id
+    Response Codes
+
+    - `200` - Book of corresponding id found 
+    - `404` - Book of the id not found / id is invalid(id is not int)
+
 - **POST** `/v1/books/newBook` - Post A new Book
 
 ### Language Routes

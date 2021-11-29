@@ -1,6 +1,8 @@
+import { isInt } from "class-validator";
 import { Request, Response, RequestHandler } from "express";
 import { Book } from "../entity/Book";
 import ApiFeatures from "../utils/ApiFeatures";
+import AppError from "../utils/AppError";
 
 export const getAllBooks = async (req: Request, res: Response) => {
   try {
@@ -40,4 +42,23 @@ export const newBook: RequestHandler = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const getBookById: RequestHandler = async (req, res, next) => {
+  const id = parseInt(req.params.id);
+  if (!isInt(id)) {
+    return next(new AppError("No book found with that id", 404));
+  }
+
+  const book = await Book.findOne(id, { relations: ["language", "images"] });
+
+  if (!book) {
+    return next(new AppError("No book found with that id", 404));
+  }
+  return res.status(200).json({
+    status: "success",
+    data: {
+      book,
+    },
+  });
 };
