@@ -173,3 +173,63 @@ describe("GET /v1/books", () => {
     });
   });
 });
+
+describe("GET /v1/books/:id", () => {
+  let book;
+  beforeEach(async () => {
+    const lang = await Language.create({ name: faker.lorem.word() }).save();
+    const GENRE = [
+      "action and adventure",
+      "classics",
+      "comic book or graphic novel",
+    ];
+    for (let i = 0; i < 30; i++) {
+      book = await Book.create({
+        name: faker.lorem.words(6),
+        author: faker.name.firstName(),
+        genre: GENRE[Math.floor(Math.random() * GENRE.length)],
+        language: lang,
+        publisher: faker.lorem.word(),
+      }).save();
+      const img = await Image.create({
+        url: faker.internet.url(),
+        book,
+      }).save();
+    }
+  });
+
+  test("should return status 200", async () => {
+    const res = await request.get(`/v1/books/${book.id}`);
+    expect(res.statusCode).toBe(200);
+  });
+
+  test("should return content type json", async () => {
+    const res = await request.get(`/v1/books/${book.id}`);
+    expect(res.headers["content-type"]).toEqual(
+      expect.stringContaining("json")
+    );
+  });
+
+  test("should return data", async () => {
+    const res = await request.get(`/v1/books/${book.id}`);
+
+    expect(res.body.data.book).toBeDefined();
+  });
+
+  test("should have all data of book", async () => {
+    const res = await request.get(`/v1/books/${book.id}`);
+
+    const returnedBook = res.body.data.book;
+
+    expect(returnedBook).toMatchObject({
+      name: expect.any(String),
+      genre: expect.any(String),
+      author: expect.any(String),
+      publisher: expect.any(String),
+      language: {
+        name: expect.any(String),
+      },
+      images: Array(expect.objectContaining({ url: expect.any(String) })),
+    });
+  });
+});
