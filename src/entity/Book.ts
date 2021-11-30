@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Image } from "./Image";
 import { Language } from "./Language";
+import { User } from "./User";
 
 @Entity()
 export class Book extends BaseEntity {
@@ -38,4 +39,7 @@ export class Book extends BaseEntity {
   })
   @JoinColumn()
   language: Language;
+
+  @ManyToOne((type) => User, (user) => user.books, { onDelete: "CASCADE" })
+  user: User;
 }

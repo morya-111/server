@@ -1,6 +1,7 @@
 import { isInt } from "class-validator";
 import { Request, Response, RequestHandler } from "express";
 import { Book } from "../entity/Book";
+import { User } from "../entity/User";
 import ApiFeatures from "../utils/ApiFeatures";
 import AppError from "../utils/AppError";
 
@@ -30,11 +31,10 @@ export const getAllBooks = async (req: Request, res: Response) => {
 
 export const newBook: RequestHandler = async (req: Request, res: Response) => {
   try {
-    const book = Book.create({ ...req.body });
+    let book = Book.create({ ...req.body, user: req.user });
 
-    await Book.save(book);
+    book = await Book.save(book);
 
-    console.log(`Posted A New Book :  ${req.body.name}`);
     res.status(200).json({
       msg: "Book posted into db",
       data: book,
@@ -60,5 +60,22 @@ export const getBookById: RequestHandler = async (req, res, next) => {
     data: {
       book,
     },
+  });
+};
+
+export const getAllBooksByLoggedInUser: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  const books = await Book.find({ user: req.user });
+
+  if (!books) {
+    return next(new AppError("No books found by that user", 404));
+  }
+
+  return res.status(200).json({
+    status: "success",
+    data: { books },
   });
 };
