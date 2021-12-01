@@ -48,7 +48,7 @@
     "typeorm-express-query-builder": "^1.5.0"
   },
   "scripts": {
-    "start-dev": "tsnd --respawn src/index.ts",
+    "dev": "tsnd --respawn src/index.ts",
     "test": "cross-env NODE_ENV=test jest --runInBand",
     "alone": "tsnd  src/standalone.ts"
   }

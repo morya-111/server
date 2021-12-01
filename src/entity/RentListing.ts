@@ -1,4 +1,4 @@
-import { IsDefined, IsNumber } from "class-validator";
+import { IsDefined, IsNumber, Length, Max, MaxLength } from "class-validator";
 import {
   Entity,
   Column,
@@ -25,8 +25,15 @@ export class RentListing extends BaseEntity {
   @IsNumber()
   deposit: number;
 
-  @Column({ type: "timestamptz" })
-  duration: Date;
+  @Column()
+  @IsDefined({ message: "Duration is required" })
+  @IsNumber()
+  duration: number;
+
+  @Column({ length: 10 })
+  @IsDefined({ message: "Duration Unit is required" })
+  @MaxLength(10)
+  durationUnit: string;
 
   @CreateDateColumn()
   createdAt: Date;
