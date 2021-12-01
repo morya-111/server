@@ -4,11 +4,18 @@ import app from "../src/app";
 import { Book } from "../src/entity/Book";
 import { Image } from "../src/entity/Image";
 import { Language } from "../src/entity/Language";
+import { User } from "../src/entity/User";
 
 const request = supertest(app);
 
 describe("GET /v1/books", () => {
   beforeEach(async () => {
+    const user = await User.create({
+      first_name: faker.name.firstName(),
+      last_name: faker.name.lastName(),
+      email: faker.internet.email(),
+      role: "INDIVIDUAL",
+    }).save();
     const lang = await Language.create({ name: faker.lorem.word() }).save();
     const GENRE = [
       "action and adventure",
@@ -16,16 +23,17 @@ describe("GET /v1/books", () => {
       "comic book or graphic novel",
     ];
     for (let i = 0; i < 30; i++) {
+      const img = await Image.create({
+        url: faker.internet.url(),
+      }).save();
       const book = await Book.create({
         name: faker.lorem.words(6),
         author: faker.name.firstName(),
         genre: GENRE[Math.floor(Math.random() * GENRE.length)],
         language: lang,
         publisher: faker.lorem.word(),
-      }).save();
-      const img = await Image.create({
-        url: faker.internet.url(),
-        book,
+        image: img,
+        user,
       }).save();
     }
   });
@@ -79,7 +87,7 @@ describe("GET /v1/books", () => {
       language: {
         name: expect.any(String),
       },
-      images: Array(expect.objectContaining({ url: expect.any(String) })),
+      image: expect.objectContaining({ url: expect.any(String) }),
     });
   });
 
@@ -184,16 +192,16 @@ describe("GET /v1/books/:id", () => {
       "comic book or graphic novel",
     ];
     for (let i = 0; i < 30; i++) {
+      const img = await Image.create({
+        url: faker.internet.url(),
+      }).save();
       book = await Book.create({
         name: faker.lorem.words(6),
         author: faker.name.firstName(),
         genre: GENRE[Math.floor(Math.random() * GENRE.length)],
         language: lang,
         publisher: faker.lorem.word(),
-      }).save();
-      const img = await Image.create({
-        url: faker.internet.url(),
-        book,
+        image: img,
       }).save();
     }
   });
@@ -229,7 +237,7 @@ describe("GET /v1/books/:id", () => {
       language: {
         name: expect.any(String),
       },
-      images: Array(expect.objectContaining({ url: expect.any(String) })),
+      image: expect.objectContaining({ url: expect.any(String) }),
     });
   });
 });
