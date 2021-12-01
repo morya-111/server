@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { Address } from "./Address";
 import { Auth } from "./Auth";
-import { IsDefined, IsEmail, IsString } from "class-validator";
+import { IsDefined, IsEmail, IsOptional, IsString } from "class-validator";
 import { Book } from "./Book";
 
 const DEFAULT_AVATAR =
@@ -35,6 +35,7 @@ export class User extends BaseEntity {
   email: string;
 
   @Column({ default: DEFAULT_AVATAR })
+  @IsOptional()
   @IsString()
   avatarUrl: string;
 
