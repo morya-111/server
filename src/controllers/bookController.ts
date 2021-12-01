@@ -1,6 +1,8 @@
-import { isInt } from "class-validator";
+import { isInt, validate } from "class-validator";
 import { Request, Response, RequestHandler } from "express";
 import { Book } from "../entity/Book";
+import { RentListing } from "../entity/RentListing";
+import { SellListing } from "../entity/SellListing";
 import { User } from "../entity/User";
 import ApiFeatures from "../utils/ApiFeatures";
 import AppError from "../utils/AppError";
@@ -14,7 +16,7 @@ export const getAllBooks = async (req: Request, res: Response) => {
 
     const books = await Book.findAndCount({
       ...features.builtQuery,
-      relations: ["language", "images"],
+      relations: ["language", "image", "sellListing", "rentListing"],
     });
 
     res.status(200).json({
@@ -29,18 +31,80 @@ export const getAllBooks = async (req: Request, res: Response) => {
   }
 };
 
-export const newBook: RequestHandler = async (req: Request, res: Response) => {
+export const newBook: RequestHandler = async (req, res, next) => {
   try {
-    let book = Book.create({ ...req.body, user: req.user });
+    let sellListing;
+    let rentListing;
+    const {
+      name,
+      description,
+      genre,
+      author,
+      publisher,
+      language,
+      image,
+      price,
+      deposit,
+      fees,
+      duration,
+    } = req.body;
 
-    book = await Book.save(book);
+    console.log({ body: req.body });
+
+    let book = Book.create({
+      name,
+      description,
+      genre,
+      author,
+      publisher,
+      language,
+      image,
+      user: req.user,
+    });
+
+    // validate book
+    let errors = await validate(book);
+    if (errors.length > 0)
+      return next(new AppError("Validation Error", 400, errors));
+
+    book = await book.save();
+
+    if (price) {
+      sellListing = SellListing.create({ price });
+
+      // validate sellListing
+      let errors = await validate(sellListing);
+      if (errors.length > 0)
+        return next(new AppError("Validation Error", 400, errors));
+
+      sellListing.book = book;
+      sellListing = await sellListing.save();
+      sellListing.book = undefined;
+    }
+
+    if (deposit && fees && duration) {
+      rentListing = RentListing.create({
+        deposit,
+        fees,
+        duration: new Date(duration),
+      });
+
+      // validate rentListing
+      let errors = await validate(rentListing);
+      if (errors.length > 0)
+        return next(new AppError("Validation Error", 400, errors));
+
+      rentListing.book = book;
+      rentListing = await rentListing.save();
+      rentListing.book = undefined;
+    }
 
     res.status(200).json({
       msg: "Book posted into db",
-      data: book,
+      data: { book: { ...book, sellListing, rentListing } },
     });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
@@ -50,7 +114,9 @@ export const getBookById: RequestHandler = async (req, res, next) => {
     return next(new AppError("No book found with that id", 404));
   }
 
-  const book = await Book.findOne(id, { relations: ["language", "images"] });
+  const book = await Book.findOne(id, {
+    relations: ["language", "image", "sellListing", "rentListing"],
+  });
 
   if (!book) {
     return next(new AppError("No book found with that id", 404));
@@ -68,10 +134,10 @@ export const getAllBooksByLoggedInUser: RequestHandler = async (
   res,
   next
 ) => {
-  const userId = (<any>req.user).id;
+
   const books = await Book.find({
-    relations: ["language", "user"],
-    where: { user: { id: userId } },
+    where: { user: req.user },
+    relations: ["language", "image", "sellListing", "rentListing"],
   });
 
   if (books && books.length == 0) {

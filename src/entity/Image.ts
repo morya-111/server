@@ -19,8 +19,4 @@ export class Image extends BaseEntity {
 
   @Column({ length: 300, nullable: true })
   label: string;
-
-  @ManyToOne((type) => Book, (book) => book.images, { onDelete: "CASCADE" })
-  @JoinColumn()
-  book: Book;
 }

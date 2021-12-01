@@ -9,7 +9,9 @@ import AppError from "../utils/AppError";
 const UPLOAD_URL: String = "https://api.imgbb.com/1/upload";
 
 export const newImage: RequestHandler = async (req, res, next) => {
-  const seq = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
+  const seq = (Math.floor(Math.random() * 10000) + 10000)
+    .toString()
+    .substring(1);
   console.log(`Image Upload Started, Temp Sequence Number : ${seq}`);
 
   const imgString = req.file.buffer.toString("base64"); // console.log(imgbbrespone);
@@ -45,11 +47,10 @@ export const newImage: RequestHandler = async (req, res, next) => {
             imgBBurl: imgBBMainResponse.data.url,
             extension: imgBBMainResponse.data.image.extension,
           };
-          const book = await Book.findOne({ id: req.body.bookId });
+          // const book = await Book.findOne({ id: req.body.bookId });
           const newImage = Image.create({
             url: imgDetails.imgBBurl as string,
             label: null,
-            book: book,
           });
 
           await Image.save(newImage);
@@ -62,9 +63,17 @@ export const newImage: RequestHandler = async (req, res, next) => {
             },
           });
         } else {
-          console.log(`Server Image Upload Failed for ${seq}`, imgBBMainResponse);
+          console.log(
+            `Server Image Upload Failed for ${seq}`,
+            imgBBMainResponse
+          );
 
-          return next(new AppError("Internal Server Error, Check server logs if possible", 500));
+          return next(
+            new AppError(
+              "Internal Server Error, Check server logs if possible",
+              500
+            )
+          );
         }
       });
     }

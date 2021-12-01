@@ -5,6 +5,8 @@ import connection from "./connection";
 import { Image } from "./entity/Image";
 import { Book } from "./entity/Book";
 import { Language } from "./entity/Language";
+import { User } from "./entity/User";
+import { Auth } from "./entity/Auth";
 
 const MAX_ROWS_TO_INSERT = 300;
 
@@ -36,6 +38,17 @@ const LANGUAGES = ["french", "spanish", "tamil", "urdu", "dutch", "hebrew"];
 
   await connection.clear();
 
+  const user = await User.create({
+    email: "a@b.com",
+    first_name: "Chintu",
+    last_name: "Sharma",
+    role: "INDIVIDUAL",
+  }).save();
+  await Auth.create({
+    password: "12345678",
+    user,
+  }).save();
+
   const languageObjects = [];
 
   for (let i = 0; i < LANGUAGES.length; i++) {
@@ -62,6 +75,7 @@ const LANGUAGES = ["french", "spanish", "tamil", "urdu", "dutch", "hebrew"];
     .on("data", async (row) => {
       try {
         stream.pause();
+        const image = await Image.create({ url: row.img }).save();
         const book = await Book.create({
           name: row.name,
           author: row.author,
@@ -70,9 +84,9 @@ const LANGUAGES = ["french", "spanish", "tamil", "urdu", "dutch", "hebrew"];
           genre: GENRE[Math.floor(Math.random() * GENRE.length)],
           language:
             languageObjects[Math.floor(Math.random() * languageObjects.length)],
+          image,
+          user,
         }).save();
-
-        await Image.create({ book, url: row.img }).save();
       } finally {
         stream.resume();
       }
