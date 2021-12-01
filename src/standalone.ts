@@ -36,18 +36,18 @@ const LANGUAGES = ["french", "spanish", "tamil", "urdu", "dutch", "hebrew"];
 (async () => {
   await connection.create();
 
-  await connection.clear();
+  // await connection.clear();
 
-  const user = await User.create({
-    email: "a@b.com",
-    first_name: "Chintu",
-    last_name: "Sharma",
-    role: "INDIVIDUAL",
-  }).save();
-  await Auth.create({
-    password: "12345678",
-    user,
-  }).save();
+  // const user = await User.create({
+  //   email: "a@b.com",
+  //   first_name: "Chintu",
+  //   last_name: "Sharma",
+  //   role: "INDIVIDUAL",
+  // }).save();
+  // await Auth.create({
+  //   password: "12345678",
+  //   user,
+  // }).save();
 
   const languageObjects = [];
 
@@ -65,35 +65,35 @@ const LANGUAGES = ["french", "spanish", "tamil", "urdu", "dutch", "hebrew"];
     languageObjects.push(lang);
   }
 
-  const stream = fs
-    .createReadStream(path.resolve(__dirname, "../dev-data/500-books.csv"))
-    .pipe(csv.parse({ headers: true, maxRows: MAX_ROWS_TO_INSERT }))
-    .on("error", async (error) => {
-      console.error(error);
-      await connection.close();
-    })
-    .on("data", async (row) => {
-      try {
-        stream.pause();
-        const image = await Image.create({ url: row.img }).save();
-        const book = await Book.create({
-          name: row.name,
-          author: row.author,
-          publisher: row.publication,
-          description: row.description === "" ? null : row.description,
-          genre: GENRE[Math.floor(Math.random() * GENRE.length)],
-          language:
-            languageObjects[Math.floor(Math.random() * languageObjects.length)],
-          image,
-          user,
-        }).save();
-      } finally {
-        stream.resume();
-      }
-    })
-    .on("end", async () => {
-      setTimeout(async () => {
-        await connection.close();
-      }, 3000);
-    });
+  // const stream = fs
+  //   .createReadStream(path.resolve(__dirname, "../dev-data/500-books.csv"))
+  //   .pipe(csv.parse({ headers: true, maxRows: MAX_ROWS_TO_INSERT }))
+  //   .on("error", async (error) => {
+  //     console.error(error);
+  //     await connection.close();
+  //   })
+  //   .on("data", async (row) => {
+  //     try {
+  //       stream.pause();
+  //       const image = await Image.create({ url: row.img }).save();
+  //       const book = await Book.create({
+  //         name: row.name,
+  //         author: row.author,
+  //         publisher: row.publication,
+  //         description: row.description === "" ? null : row.description,
+  //         genre: GENRE[Math.floor(Math.random() * GENRE.length)],
+  //         language:
+  //           languageObjects[Math.floor(Math.random() * languageObjects.length)],
+  //         image,
+  //         user,
+  //       }).save();
+  //     } finally {
+  //       stream.resume();
+  //     }
+  //   })
+  //   .on("end", async () => {
+  //     setTimeout(async () => {
+  //       await connection.close();
+  //     }, 3000);
+  //   });
 })();
