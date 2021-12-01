@@ -5,7 +5,7 @@ import { Book } from "../src/entity/Book";
 import { Image } from "../src/entity/Image";
 import { Language } from "../src/entity/Language";
 import { User } from "../src/entity/User";
-
+import { Auth } from "../src/entity/Auth";
 const request = supertest(app);
 
 describe("GET /v1/books", () => {
@@ -239,5 +239,145 @@ describe("GET /v1/books/:id", () => {
       },
       image: expect.objectContaining({ url: expect.any(String) }),
     });
+  });
+});
+
+describe("GET /v1/books/mybooks", () => {
+  const loginData = {
+    email: faker.internet.email(),
+    password: faker.internet.password(8),
+    cookie: null,
+  };
+
+  beforeEach(async () => {
+    const user = User.create({
+      first_name: faker.name.firstName(8),
+      last_name: faker.name.lastName(8),
+      email: loginData.email,
+      role: "INDIVIDUAL",
+    });
+    await user.save();
+    const auth = Auth.create({
+      password: loginData.password,
+      user: user,
+    });
+    auth.save();
+
+    const authedUser = await request
+      .post("/v1/user/login")
+      .send({ email: loginData.email, password: loginData.password });
+
+    const cookie = authedUser.headers["set-cookie"][0];
+    loginData.cookie = cookie;
+
+    const lang1 = await Language.create({ name: faker.lorem.word() }).save();
+    const lang2 = await Language.create({ name: faker.lorem.word() }).save();
+    const GENRE = [
+      "action and adventure",
+      "classics",
+      "comic book or graphic novel",
+    ];
+    const languages = [lang1, lang2];
+    for (let i = 0; i < 5; i++) {
+      const book = await Book.create({
+        name: faker.lorem.words(6),
+        description: faker.lorem.paragraph(3),
+        author: faker.name.firstName(),
+        genre: GENRE[Math.floor(Math.random() * GENRE.length)],
+        publisher: faker.lorem.word(),
+        language: languages[Math.floor(Math.random() * languages.length)],
+        user: user,
+      }).save();
+    }
+  });
+
+  test("should return data", async () => {
+    const res = await request
+      .get(`/v1/books/mybooks`)
+      .set("Cookie", [loginData.cookie]);
+
+    expect(res.body.data.books).toBeDefined();
+  });
+  test("should be protected", async () => {
+    const bookRes = await request.get("/v1/books/mybooks");
+    expect(bookRes.statusCode).toBe(401);
+  });
+
+  test("should return array of books", async () => {
+    const bookRes = await request
+      .get("/v1/books/mybooks")
+      .set("Cookie", [loginData.cookie]);
+
+    expect(Array.isArray(bookRes.body.data.books)).toBe(true);
+  });
+
+  test("should return in total 5 books ", async () => {
+    const bookRes = await request
+      .get("/v1/books/mybooks")
+      .set("Cookie", [loginData.cookie]);
+
+    expect(bookRes.body.data.books.length).toBe(5);
+  });
+
+  test("All books should be valid Books", async () => {
+    const bookRes = await request
+      .get("/v1/books/mybooks")
+      .set("Cookie", [loginData.cookie]);
+
+    bookRes.body.data.books.forEach((b) => {
+      expect(b).toMatchObject({
+        id: expect.any(Number),
+        name: expect.any(String),
+        description: expect.any(String),
+        genre: expect.any(String),
+        author: expect.any(String),
+        publisher: expect.any(String),
+        language: {
+          name: expect.any(String),
+        },
+      });
+    });
+  });
+
+  test("should return content type json", async () => {
+    const res = await request
+      .get(`/v1/books/mybooks`)
+      .set("Cookie", [loginData.cookie]);
+
+    expect(res.headers["content-type"]).toEqual(
+      expect.stringContaining("json")
+    );
+  });
+  test("should return 404 if there are no books by that user", async () => {
+    const loginDataLocal = {
+      email: faker.internet.email("shreyas"),
+      password: faker.internet.password(8),
+      cookie: null,
+    };
+    const user2 = User.create({
+      first_name: faker.name.firstName(8),
+      last_name: faker.name.lastName(8),
+      email: loginDataLocal.email,
+      role: "INDIVIDUAL",
+    });
+    await user2.save();
+    const auth2 = Auth.create({
+      password: loginDataLocal.password,
+      user: user2,
+    });
+    auth2.save();
+
+    const authedUser2 = await request
+      .post("/v1/user/login")
+      .send({ email: loginDataLocal.email, password: loginDataLocal.password });
+
+    const cookie = authedUser2.headers["set-cookie"][0];
+    loginDataLocal.cookie = cookie;
+
+    const res = await request
+      .get(`/v1/books/mybooks`)
+      .set("Cookie", [loginDataLocal.cookie]);
+
+    expect(res.statusCode).toBe(404);
   });
 });

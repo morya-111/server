@@ -134,12 +134,13 @@ export const getAllBooksByLoggedInUser: RequestHandler = async (
   res,
   next
 ) => {
+
   const books = await Book.find({
     where: { user: req.user },
     relations: ["language", "image", "sellListing", "rentListing"],
   });
 
-  if (!books) {
+  if (books && books.length == 0) {
     return next(new AppError("No books found by that user", 404));
   }
 
