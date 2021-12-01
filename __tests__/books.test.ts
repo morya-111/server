@@ -261,7 +261,7 @@ describe("GET /v1/books/mybooks", () => {
       password: loginData.password,
       user: user,
     });
-    auth.save();
+    await auth.save();
 
     const authedUser = await request
       .post("/v1/user/login")
