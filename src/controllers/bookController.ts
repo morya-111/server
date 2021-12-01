@@ -47,6 +47,7 @@ export const newBook: RequestHandler = async (req, res, next) => {
       deposit,
       fees,
       duration,
+      durationUnit,
     } = req.body;
 
     console.log({ body: req.body });
@@ -82,11 +83,12 @@ export const newBook: RequestHandler = async (req, res, next) => {
       sellListing.book = undefined;
     }
 
-    if (deposit && fees && duration) {
+    if (deposit && fees && duration && durationUnit) {
       rentListing = RentListing.create({
         deposit,
         fees,
-        duration: new Date(duration),
+        duration,
+        durationUnit,
       });
 
       // validate rentListing
@@ -134,7 +136,6 @@ export const getAllBooksByLoggedInUser: RequestHandler = async (
   res,
   next
 ) => {
-
   const books = await Book.find({
     where: { user: req.user },
     relations: ["language", "image", "sellListing", "rentListing"],
