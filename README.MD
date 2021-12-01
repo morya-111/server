@@ -7,11 +7,6 @@
 
 ### Book Routes
 
-- **PUT** `/v1/user/updateuser` - updates user.
-- **DELETE** `/v1/user/deleteuser` - deletes user and cookie both
-
-### Book Routes
-
 - **GET** `/v1/books` - Get All Books
 
   Pagination [Enabled](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups)
