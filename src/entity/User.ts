@@ -8,8 +8,11 @@ import {
 } from "typeorm";
 import { Address } from "./Address";
 import { Auth } from "./Auth";
-import { IsDefined, IsEmail } from "class-validator";
+import { IsDefined, IsEmail, IsString } from "class-validator";
 import { Book } from "./Book";
+
+const DEFAULT_AVATAR =
+  process.env.DEFAULT_AVATAR || "https://i.ibb.co/svPq37Q/62c39aa27b5f.png";
 
 @Entity()
 export class User extends BaseEntity {
@@ -17,10 +20,12 @@ export class User extends BaseEntity {
   id: number;
 
   @IsDefined({ message: "First Name is required." })
+  @IsString()
   @Column({ length: 30 })
   first_name: string;
 
   @IsDefined({ message: "Last Name is required." })
+  @IsString()
   @Column({ length: 30 })
   last_name: string;
 
@@ -29,7 +34,12 @@ export class User extends BaseEntity {
   @Column({ length: 200, unique: true })
   email: string;
 
+  @Column({ default: DEFAULT_AVATAR })
+  @IsString()
+  avatarUrl: string;
+
   @IsDefined()
+  @IsString()
   @Column({ length: 20 }) // This can be later set to enum when all roles are finalized
   role: string;
 
