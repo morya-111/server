@@ -40,6 +40,8 @@ export class Book extends BaseEntity {
   @JoinColumn()
   language: Language;
 
-  @ManyToOne((type) => User, (user) => user.books, { onDelete: "CASCADE" })
+  @ManyToOne((type) => User, (user) => user.books, {
+    onDelete: "CASCADE",
+  })
   user: User;
 }
