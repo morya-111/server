@@ -117,7 +117,7 @@ export const getBookById: RequestHandler = async (req, res, next) => {
   }
 
   const book = await Book.findOne(id, {
-    relations: ["language", "image", "sellListing", "rentListing"],
+    relations: ["language", "image", "sellListing", "rentListing", "user"],
   });
 
   if (!book) {
