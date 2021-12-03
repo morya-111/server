@@ -21,19 +21,19 @@ export const updateUser: RequestHandler = async (req, res, next) => {
   }
   if (newUser.avatarUrl && newUser.avatarUrl !== oldUser.avatarUrl) {
     oldUser.avatarUrl = newUser.avatarUrl;
-    changedFields.push("Avatar URL");
+    changedFields.push("Avatar");
   }
   if (newUser.first_name && newUser.first_name !== oldUser.first_name) {
     oldUser.first_name = newUser.first_name;
-    changedFields.push("first_name");
+    changedFields.push("First Name");
   }
   if (newUser.last_name && newUser.last_name !== oldUser.last_name) {
     oldUser.last_name = newUser.last_name;
-    changedFields.push("last_name");
+    changedFields.push("Last Name");
   }
 
   if (newUser.password) {
-    if (oldUser.auth.password) {
+    if (!oldUser.auth.password) {
       return next(
         new AppError(`User has not signed up using BookEx Auth System `, 404)
       );
@@ -47,7 +47,7 @@ export const updateUser: RequestHandler = async (req, res, next) => {
           new AppError(`Validation Errors in new password`, 401, authVal)
         );
       }
-      changedFields.push("password");
+      changedFields.push("Password");
 
       oldUser.auth.password = hashSync(oldUser.auth.password, 12);
       await oldUser.auth.save();
