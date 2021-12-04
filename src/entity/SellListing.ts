@@ -24,7 +24,7 @@ export class SellListing extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToOne((type) => Book, { nullable: true })
+  @OneToOne((type) => Book, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn()
   book: Book;
 }

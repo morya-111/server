@@ -27,4 +27,5 @@ module.exports = {
   entities: ["src/entity/**/*.ts"],
   dropSchema: NODE_ENV === "test",
   // dropSchema: true,
+  logging: true,
 };
