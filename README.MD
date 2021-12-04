@@ -5,6 +5,31 @@
 
 # API Reference
 
+### User Routes
+
+- **DELETE** `/v1/user/deleteuser` - Deletes The User And logs out.
+
+- **PUT** `/v1/user/updateuser` - send any of -
+  `{first_name, last_name, password, avatarUrl}` and it will return -
+  ```
+  {
+      "message": "success",
+      "changedFields": [
+        "password"
+      ],
+      "data": {
+          "newUser": {
+              "id": 1,
+              "first_name": "Q",
+              "last_name": "W",
+              "email": "4@4.com",
+              "avatarUrl": "https://i.ibb.co/rt9TSY7/8740db0e7e05.png",
+              "role": "INDIVIDUAL"
+          }
+      }
+  }
+  ```
+
 ### Book Routes
 
 - **GET** `/v1/books` - Get All Books

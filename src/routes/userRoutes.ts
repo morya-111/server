@@ -7,7 +7,11 @@ import {
   isLoggedIn,
 } from "../controllers/authController";
 
-import { updateUser, deleteUserAccount } from "../controllers/userController";
+import {
+  updateUser,
+  deleteUserAccount,
+  getLoggedInUsing,
+} from "../controllers/userController";
 
 const userRouter = Router();
 
@@ -21,5 +25,6 @@ userRouter.get("/isloggedin", protect(), isLoggedIn);
 
 userRouter.put("/updateuser", protect(), updateUser);
 userRouter.delete("/deleteuser", protect(), deleteUserAccount);
+userRouter.get("/loggedinusing", protect(), getLoggedInUsing);
 
 export default userRouter;
