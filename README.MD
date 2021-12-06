@@ -34,6 +34,8 @@
 
 - **GET** `/v1/books` - Get All Books
 
+  Query Param `?s=searchInName` : search book by search term
+
   Pagination [Enabled](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups)
 
 - **GET** `/v1/books/:id` - Get Book By Id
