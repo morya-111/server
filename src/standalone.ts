@@ -13,6 +13,8 @@ import faker, { fake } from "faker";
 
 const MAX_ROWS_TO_INSERT = 300;
 
+const ONLY_LANGUAGE = true;
+
 const GENRE = [
   "adventure",
   "classics",
@@ -42,17 +44,6 @@ const DURATION_UNITS = ["Months", "Days", "Years"];
 
   await connection.clear();
 
-  const user = await User.create({
-    email: "a@b.com",
-    first_name: "Chintu",
-    last_name: "Sharma",
-    role: "INDIVIDUAL",
-  }).save();
-  await Auth.create({
-    password: "qwertyui",
-    user,
-  }).save();
-
   const languageObjects = [];
 
   for (let i = 0; i < LANGUAGES.length; i++) {
@@ -68,6 +59,19 @@ const DURATION_UNITS = ["Months", "Days", "Years"];
 
     languageObjects.push(lang);
   }
+
+  if (ONLY_LANGUAGE) return;
+
+  const user = await User.create({
+    email: "a@b.com",
+    first_name: "Chintu",
+    last_name: "Sharma",
+    role: "INDIVIDUAL",
+  }).save();
+  await Auth.create({
+    password: "qwertyui",
+    user,
+  }).save();
 
   const stream = fs
     .createReadStream(path.resolve(__dirname, "../dev-data/500-books.csv"))
