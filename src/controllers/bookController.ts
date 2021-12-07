@@ -1,21 +1,30 @@
 import { isInt, validate } from "class-validator";
 import { Request, Response, RequestHandler } from "express";
+import { ILike } from "typeorm";
 import { Book } from "../entity/Book";
 import { RentListing } from "../entity/RentListing";
 import { SellListing } from "../entity/SellListing";
-import { User } from "../entity/User";
 import ApiFeatures from "../utils/ApiFeatures";
 import AppError from "../utils/AppError";
+import merge from "lodash.merge";
 
-export const getAllBooks = async (req: Request, res: Response) => {
+export const getAllBooks = async (req: Request, res: Response, next) => {
   try {
+    let searchObject;
+    if (req.query.s) {
+      searchObject = { where: { name: ILike(`%${req.query.s}%`) } };
+      delete req.query.s;
+    }
+
     const features = new ApiFeatures(req.query, {
       ordering: false,
       select: false,
     });
 
+    const findOptions = merge(features.builtQuery, searchObject);
+
     const books = await Book.findAndCount({
-      ...features.builtQuery,
+      ...findOptions,
       relations: ["language", "image", "sellListing", "rentListing"],
     });
 
@@ -27,7 +36,7 @@ export const getAllBooks = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
