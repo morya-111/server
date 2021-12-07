@@ -159,3 +159,17 @@ export const getAllBooksByLoggedInUser: RequestHandler = async (
     data: { books },
   });
 };
+
+export const deleteBook: RequestHandler = async (req, res, next) => {
+  const bookId = req.params.id;
+
+  const bookDel = await Book.delete(bookId);
+  console.log(bookDel);
+  if (bookDel.affected == 0) {
+    return next(new AppError("Book with that ID doesn't exist.", 404));
+  }
+
+  res.status(200).json({
+    msg: "success",
+  });
+};
