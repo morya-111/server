@@ -54,6 +54,7 @@
     "test": "cross-env NODE_ENV=test jest --runInBand",
     "build": "tsc",
     "start": "node dist/index.js",
-    "alone": "tsnd  src/standalone.ts"
+    "alone": "tsnd  src/standalone.ts",
+    "preinstall": "yarn global add typescript"
   }
 }
