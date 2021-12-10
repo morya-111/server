@@ -28,4 +28,8 @@ module.exports = {
   dropSchema: NODE_ENV === "test",
   // dropSchema: true,
   logging: true,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : undefined,
 };
