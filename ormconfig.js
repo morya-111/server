@@ -24,7 +24,11 @@ module.exports = {
   url: NODE_ENV === "test" ? TEST_DATABASE_URL : DATABASE_URL,
   synchronize: true,
   logging: NODE_ENV === "development",
-  entities: ["src/entity/**/*.ts"],
+  entities: [
+    NODE_ENV === "production"
+      ? "dist/entities/**/*.js"
+      : "src/entities/**/*.ts",
+  ],
   dropSchema: NODE_ENV === "test",
   // dropSchema: true,
   logging: true,
