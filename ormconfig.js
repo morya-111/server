@@ -25,13 +25,10 @@ module.exports = {
   synchronize: true,
   logging: NODE_ENV === "development",
   entities: [
-    NODE_ENV === "production"
-      ? "dist/entities/**/*.js"
-      : "src/entities/**/*.ts",
+    NODE_ENV === "production" ? "dist/entity/**/*.js" : "src/entity/**/*.ts",
   ],
   dropSchema: NODE_ENV === "test",
   // dropSchema: true,
-  logging: true,
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: false }
