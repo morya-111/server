@@ -13,7 +13,7 @@ import faker, { fake } from "faker";
 
 const MAX_ROWS_TO_INSERT = 300;
 
-const ONLY_LANGUAGE = false;
+const ONLY_LANGUAGE = true;
 
 const GENRE = [
   "adventure",
@@ -60,7 +60,7 @@ const DURATION_UNITS = ["Months", "Days", "Years"];
     languageObjects.push(lang);
   }
 
-  if (ONLY_LANGUAGE) return;
+  if (ONLY_LANGUAGE) return await connection.close();
 
   const user = await User.create({
     email: "a@b.com",
