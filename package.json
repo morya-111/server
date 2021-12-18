@@ -57,5 +57,6 @@
     "alone": "tsnd  src/standalone.ts",
     "preinstall": "yarn global add typescript",
     "heroku-postbuild": "node dist/standalone.js"
-  }
+  },
+  "heroku-run-build-script": true
 }
