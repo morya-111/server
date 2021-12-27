@@ -2,6 +2,9 @@ import { CookieOptions, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../entity/User";
 
+const {  FRONTEND_CLIENT = "http://localhost:3000" } =
+  process.env;
+
 export const signToken = (id: number) =>
 	jwt.sign({ id }, process.env.JWT_SECRET, {
 		expiresIn: parseInt(process.env.JWT_EXPIRES_IN) * 24 * 60 * 60 * 1000,
@@ -22,7 +25,8 @@ export const createAndSendToken = (
 		),
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		sameSite : "none"
+		sameSite : "none",
+		domain : FRONTEND_CLIENT
 	};
 
 	res.cookie("jwt", token, cookieOptions);
