@@ -13,7 +13,7 @@ import faker, { fake } from "faker";
 
 const MAX_ROWS_TO_INSERT = 300;
 
-const ONLY_LANGUAGE = true;
+const ONLY_LANGUAGE = false;
 
 const GENRE = [
   "adventure",
