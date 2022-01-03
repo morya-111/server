@@ -92,7 +92,7 @@ export const logout: RequestHandler = (_, res) => {
     secure: process.env.NODE_ENV !== "development",
     sameSite: "none",
   };
-  res.cookie("jwt", cookieOptions);
+  res.cookie("jwt", "", cookieOptions);
   res.sendStatus(200);
 };
 
