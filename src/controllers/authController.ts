@@ -1,6 +1,6 @@
 import { compare } from "bcryptjs";
 import { validate } from "class-validator";
-import { RequestHandler } from "express";
+import { CookieOptions, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import { getConnection } from "typeorm";
 import { Address } from "../entity/Address";
@@ -86,7 +86,14 @@ export const login: RequestHandler = async (req, res, next) => {
 };
 
 export const logout: RequestHandler = (_, res) => {
-  res.clearCookie("jwt").sendStatus(200);
+  const cookieOptions: CookieOptions = {
+    expires: new Date(),
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "none",
+  };
+  res.cookie("jwt", cookieOptions);
+  res.sendStatus(200);
 };
 
 export const protect =
