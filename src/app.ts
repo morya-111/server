@@ -22,7 +22,13 @@ const app = express();
 const { LATENCY = "0", FRONTEND_CLIENT = "http://localhost:3000" } =
   process.env;
 
-app.use(cors({ credentials: true, origin: FRONTEND_CLIENT }));
+app.use(
+  cors({
+    credentials: true,
+    origin: FRONTEND_CLIENT,
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+  })
+);
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(json());
