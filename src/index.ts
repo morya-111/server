@@ -12,8 +12,9 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "./types";
-import {} from "./socket/handlers";
+import { messageHandler } from "./socket/handlers";
 import applySocketMiddlewares from "./socket/applySocketMiddlwares";
+import SocketStore from "./socket/socketStore";
 
 const { PORT = 4000, LATENCY = "0", FRONTEND_CLIENT } = process.env;
 
@@ -21,6 +22,8 @@ const { PORT = 4000, LATENCY = "0", FRONTEND_CLIENT } = process.env;
   await createConnection();
 
   const httpServer = createServer(app);
+
+  // ---- SOCKET
 
   const io = new Server<
     ClientToServerEvents,
@@ -39,10 +42,16 @@ const { PORT = 4000, LATENCY = "0", FRONTEND_CLIENT } = process.env;
 
   const onConnection = (socket: EnhancedSocket) => {
     console.log("New Connection");
-    // registerAuthHandler(io, socket);
+    messageHandler(io, socket);
+
+    socket.on("disconnect", () => {
+      SocketStore.Instance.removeSocket(socket.data.user.id);
+    });
   };
 
   io.on("connection", onConnection);
+
+  // ---- SOCKET
 
   httpServer.listen(PORT, () => {
     console.log(`[SERVER STARTED] on http://localhost:${PORT}`);

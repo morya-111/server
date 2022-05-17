@@ -1,3 +1,3 @@
-import onIdentify from "./onIdentify";
+import onMessage from "./onMessage";
 
-export { onIdentify };
+export { onMessage };

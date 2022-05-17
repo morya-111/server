@@ -1,6 +1,8 @@
 import { SocketIOHandler } from "../../types";
-import {} from "../actions";
+import { onMessage } from "../actions";
 
-const messageHandler: SocketIOHandler = (io, socket) => {};
+const messageHandler: SocketIOHandler = (io, socket) => {
+  socket.on("message:send", (payload) => onMessage(io, socket, payload));
+};
 
 export default messageHandler;

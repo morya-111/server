@@ -1,4 +1,5 @@
 import { Server, Socket } from "socket.io";
+import { Chat } from "./entity/Chat";
 import { User } from "./entity/User";
 export type RoleType = "INDIVIDUAL" | "SHOP_OWNER" | "ADMIN";
 
@@ -11,12 +12,12 @@ declare global {
 }
 
 interface ServerToClientEvents {
-  ACK: () => void;
+  "message:receive": (chats: Chat[]) => void;
 }
 
 interface ClientToServerEvents {
-  MESSAGE: (payload: { to: number; from: number }) => void;
-  TEST: () => void;
+  "message:send": (payload: MessagePayload) => void;
+  test: () => void;
 }
 
 interface InterServerEvents {
@@ -44,3 +45,9 @@ type EnhancedIO = Server<
 type SocketIOHandler = (io: EnhancedIO, socket: EnhancedSocket) => void;
 
 type SocketMiddleware = (socket: EnhancedSocket, next: Function) => void;
+
+type ActionFunction<T = any> = (
+  io: EnhancedIO,
+  socket: EnhancedSocket,
+  payload: T
+) => void;

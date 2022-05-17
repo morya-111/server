@@ -1,5 +1,6 @@
 import { User } from "../entity/User";
 import { EnhancedIO, SocketMiddleware } from "../types";
+import SocketStore from "./socketStore";
 
 const applySocketMiddlewares = (io: EnhancedIO) => {
   io.use(authMiddleware);
@@ -20,6 +21,8 @@ const authMiddleware: SocketMiddleware = async (socket, next) => {
   }
 
   console.log(`[Socket Authenticated] : User Id : ${user.id}`);
+
+  SocketStore.Instance.addSocket(user.id, socket);
 
   socket.data.user = user;
 

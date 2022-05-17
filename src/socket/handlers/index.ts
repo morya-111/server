@@ -1,1 +1,3 @@
-export default {};
+import messageHandler from "./messageHandler";
+
+export { messageHandler };
