@@ -106,6 +106,83 @@
 
 - **GET** `/v1/auth/facebook` - Login with facebook
 
+### Chat Routes
+
+- [login required] **GET** `/v1/chats/:userId` - Get all chats of logged in user with the supplied userId in params.
+
+  Pagination,Ordering  [Enabled](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups)
+---
+
+## Socket Docs
+
+> :warning: Socket has no error handling yet will be added later. So make sure proper payload is sent. 
+
+- Socket Connection Initiation
+  
+  Auto Connect should be false so that client can connect with auth userId.
+  ```
+  const socket = io(URL, { autoConnect: false });
+  ```
+- Socket Connect
+  ```
+  socket.auth = { userId :1 };
+  socket.connect(); 
+  ```
+
+### Client Events
+- `message:send` : Send Chat Message to another user
+  
+  Payload
+  ```
+  {
+    to: number;
+    message: string;
+    bookId?: number;
+  }
+  ```
+### Server Events
+- `message:receive` : Listen to this event to get the chat message from the server. This will give you even the message you sent directly so don't use the own client for this.
+
+  Response
+  ```json
+  [
+  {
+    "message": "<<1>> started a conversation with <<2>> for this book, click to know more!",
+    "type": "EMBEDDED",
+    "book": {
+      "id": 10
+    },
+    "room": {
+      "id": 1
+    },
+    "sender": {
+      "id": 1
+    },
+    "id": 15,
+    "createdDate": "2022-05-17T21:39:49.079Z",
+    "updatedDate": "2022-05-17T21:39:49.079Z"
+  },
+  {
+    "message": "This is a test msg",
+    "book": {
+      "id": 10
+    },
+    "room": {
+      "id": 1,
+      "createdDate": "2022-05-15T16:27:23.575Z",
+      "updatedDate": "2022-05-15T16:27:23.575Z"
+    },
+    "sender": {
+      "id": 1
+    },
+    "id": 16,
+    "type": "NORMAL",
+    "createdDate": "2022-05-17T21:39:49.088Z",
+    "updatedDate": "2022-05-17T21:39:49.088Z"
+  }
+  ]
+  ```
+
 ---
 
 ## Developer Notes

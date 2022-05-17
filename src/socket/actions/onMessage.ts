@@ -21,10 +21,10 @@ const onMessage: ActionFunction<MessagePayload> = async (
     `
     SELECT DISTINCT p1."roomId" AS "roomId"
     FROM   participant p1, participant p2
-    WHERE  p1."userId" = ${to} AND p2."userId" = $1
+    WHERE  p1."userId" = $1 AND p2."userId" = $2
     AND    p1."roomId" = p2."roomId";
     `,
-    [socket.data.user.id]
+    [to, socket.data.user.id]
   );
 
   let room: Room;

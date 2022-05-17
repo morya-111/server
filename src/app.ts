@@ -10,6 +10,7 @@ import languageRouter from "./routes/languageRoutes";
 import userRouter from "./routes/userRoutes";
 import googleAuthRouter from "./routes/googleAuthRoutes";
 import facebookAuthRouter from "./routes/facebookAuthRoutes";
+import chatRouter from "./routes/chatRoutes";
 import globalErrorhandler from "./controllers/errorController";
 import { protect } from "./controllers/authController";
 import configureGoogleAuth from "./utils/configureGoogleAuth";
@@ -53,6 +54,8 @@ app.use("/v1/images", imageRouter);
 app.use("/v1/languages", languageRouter);
 
 app.use("/v1/user", userRouter);
+
+app.use("/v1/chats", chatRouter);
 
 app.use("/v1/auth/google", googleAuthRouter);
 
