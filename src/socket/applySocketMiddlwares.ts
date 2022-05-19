@@ -7,7 +7,9 @@ const applySocketMiddlewares = (io: EnhancedIO) => {
 };
 
 const authMiddleware: SocketMiddleware = async (socket, next) => {
-  const userId = socket.handshake.auth.id;
+  const userId = socket.handshake.auth.userId;
+
+  console.log({ auth: socket.handshake.auth });
 
   console.log("User Id", userId);
 
