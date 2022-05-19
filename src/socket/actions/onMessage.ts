@@ -62,11 +62,11 @@ const onMessage: ActionFunction<MessagePayload> = async (
 
   broadcastMessages.push(sentMessage);
 
-  SocketStore.Instance.getSocket(to).emit("message:receive", broadcastMessages);
-  SocketStore.Instance.getSocket(socket.data.user.id).emit(
-    "message:receive",
-    broadcastMessages
-  );
+  const remoteSocket = SocketStore.Instance.getSocket(to);
+  const currentSocket = SocketStore.Instance.getSocket(socket.data.user.id);
+
+  if (remoteSocket) remoteSocket.emit("message:receive", broadcastMessages);
+  if (currentSocket) currentSocket.emit("message:receive", broadcastMessages);
 };
 
 const checkAndCreateEmbeddedMessage = async (
