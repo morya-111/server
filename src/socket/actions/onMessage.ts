@@ -54,7 +54,7 @@ const onMessage: ActionFunction<MessagePayload> = async (
   if (embeddedChat) broadcastMessages.push(embeddedChat);
 
   const sentMessage = await Chat.create({
-    book: { id: bookId || null },
+    book: bookId ? { id: bookId } : undefined,
     room,
     message,
     sender: { id: socket.data.user.id },
@@ -75,6 +75,7 @@ const checkAndCreateEmbeddedMessage = async (
   senderId: number,
   receiverId: number
 ): Promise<Chat | undefined> => {
+  if (!bookId) return;
   let existingEmbeddedChat = await Chat.findOne({
     where: {
       room: { id: roomId },
