@@ -111,6 +111,8 @@
 - [login required] **GET** `/v1/chats/:userId` - Get all chats of logged in user with the supplied userId in params.
 
   Pagination,Ordering  [Enabled](https://github.com/rjlopezdev/typeorm-express-query-builder#available-lookups)
+
+- [login required] **GET** `/v1/chats/users` - Get all users with whom the logged in user has chatted.
 ---
 
 ## Socket Docs

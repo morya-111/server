@@ -1,7 +1,8 @@
 import { RequestHandler } from "express";
 import merge from "lodash.merge";
-import { getManager } from "typeorm";
+import { getManager, In, Not } from "typeorm";
 import { Chat } from "../entity/Chat";
+import { Participant } from "../entity/Participant";
 import ApiFeatures from "../utils/ApiFeatures";
 
 export const getAllChatsByUserId: RequestHandler = async (req, res, next) => {
@@ -55,4 +56,30 @@ export const getAllChatsByUserId: RequestHandler = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const getChatUsers: RequestHandler = async (req, res) => {
+  const currentUserId = (req.user as any).id;
+
+  const rooms = await Participant.find({
+    where: { user: { id: currentUserId } },
+    relations: ["room"],
+  });
+
+  const chatUsers = await Participant.find({
+    where: {
+      room: { id: In(rooms.map((room) => room.room.id)) },
+      user: { id: Not(currentUserId) },
+    },
+    relations: ["user"],
+  });
+
+  console.log({ chatUsers });
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      users: chatUsers.map((user) => user.user),
+    },
+  });
 };
