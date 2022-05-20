@@ -31,13 +31,16 @@ export class Chat extends BaseEntity {
   @Column({ type: "enum", enum: MessageType, default: MessageType.NORMAL })
   type: MessageType;
 
-  @ManyToOne(() => Book, (book) => book.chats, { nullable: true })
+  @ManyToOne(() => Book, (book) => book.chats, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
   book?: Book;
 
   @ManyToOne(() => Room, (room) => room.chats)
   room: Room;
 
-  @ManyToOne(() => User, (user) => user.chats)
+  @ManyToOne(() => User, (user) => user.chats, { onDelete: "CASCADE" })
   sender: User;
 
   @CreateDateColumn({ type: "timestamp with time zone" })

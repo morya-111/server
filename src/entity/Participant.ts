@@ -19,7 +19,7 @@ export class Participant extends BaseEntity {
   @ManyToOne(() => Room, (room) => room.participants)
   room: Room;
 
-  @ManyToOne(() => User, (user) => user.participation)
+  @ManyToOne(() => User, (user) => user.participation, { onDelete: "CASCADE" })
   user: User;
 
   @CreateDateColumn({ type: "timestamp with time zone" })
