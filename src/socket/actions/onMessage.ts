@@ -54,7 +54,7 @@ const onMessage: ActionFunction<MessagePayload> = async (
   if (embeddedChat) broadcastMessages.push(embeddedChat);
 
   const sentMessage = await Chat.create({
-    book: { id: bookId },
+    book: { id: bookId || null },
     room,
     message,
     sender: { id: socket.data.user.id },
