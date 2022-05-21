@@ -43,7 +43,7 @@ export const getAllChatsByUserId: RequestHandler = async (req, res, next) => {
 
     const chats = await Chat.findAndCount({
       ...findOptions,
-      relations: ["room", "sender"],
+      relations: ["room", "sender", "book"],
     });
 
     res.status(200).json({
