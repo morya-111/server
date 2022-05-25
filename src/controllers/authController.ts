@@ -101,7 +101,7 @@ export const protect =
   async (req, _, next) => {
     const token = req.cookies.jwt;
 
-    console.log(req.cookies);
+    // console.log(req.cookies);
 
     if (!token)
       return next(

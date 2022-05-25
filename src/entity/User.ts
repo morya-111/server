@@ -10,6 +10,8 @@ import { Address } from "./Address";
 import { Auth } from "./Auth";
 import { IsDefined, IsEmail, IsOptional, IsString } from "class-validator";
 import { Book } from "./Book";
+import { Chat } from "./Chat";
+import { Participant } from "./Participant";
 
 const DEFAULT_AVATAR =
   process.env.DEFAULT_AVATAR || "https://i.ibb.co/svPq37Q/62c39aa27b5f.png";
@@ -52,4 +54,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Book, (book) => book.user)
   books: Book[];
+
+  @OneToMany(() => Chat, (chat) => chat.sender)
+  chats: Chat[];
+
+  @OneToMany(() => Participant, (participation) => participation.user)
+  participation: Participant[];
 }

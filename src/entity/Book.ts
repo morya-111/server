@@ -9,6 +9,7 @@ import {
   JoinColumn,
   OneToOne,
 } from "typeorm";
+import { Chat } from "./Chat";
 import { Image } from "./Image";
 import { Language } from "./Language";
 import { RentListing } from "./RentListing";
@@ -56,7 +57,6 @@ export class Book extends BaseEntity {
   @JoinColumn()
   language: Language;
 
-
   @IsDefined({ message: "Login user is required to create book" })
   @ManyToOne((type) => User, (user) => user.books, { onDelete: "CASCADE" })
   @ManyToOne((type) => User, (user) => user.books, {
@@ -73,4 +73,7 @@ export class Book extends BaseEntity {
     nullable: true,
   })
   rentListing: RentListing;
+
+  @OneToMany(() => Chat, (chat) => chat.book)
+  chats: Chat[];
 }
