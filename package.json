@@ -46,7 +46,6 @@
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
-    "socket.io": "^4.5.0",
     "typeorm": "^0.2.37",
     "typeorm-express-query-builder": "^1.5.0",
     "typescript": "^4.5.3"
@@ -57,10 +56,10 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "alone": "tsnd  src/standalone.ts",
-    "preinstall": "yarn global add typescript"
+    "db:sync": "tsc && node dist/scripts/sync.js",
+    "seed": "tsc && node dist/standalone.js"
   },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.6",
-    "utf-8-validate": "^5.0.9"
+  "engines": {
+    "node": "22.x"
   }
 }

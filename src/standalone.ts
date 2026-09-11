@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import "dotenv/config";
 import fs from "fs";
 import path from "path";
 import * as csv from "@fast-csv/parse";
@@ -83,7 +85,10 @@ const DURATION_UNITS = ["Months", "Days", "Years"];
     .on("data", async (row) => {
       try {
         stream.pause();
-        const image = await Image.create({ url: row.img }).save();
+        // https so the images aren't blocked as mixed content on the deployed site
+        const image = await Image.create({
+          url: row.img.replace(/^http:\/\//, "https://"),
+        }).save();
         const book = await Book.create({
           name: row.name,
           author: row.author,

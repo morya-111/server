@@ -1,4 +1,5 @@
 import { compare } from "bcryptjs";
+import crypto from "crypto";
 import { validate } from "class-validator";
 import { CookieOptions, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
@@ -85,12 +86,31 @@ export const login: RequestHandler = async (req, res, next) => {
   createAndSendToken(existingUser, 200, res);
 };
 
+// One-click demo access: a fresh throwaway account per guest, so guests can't
+// touch each other's (or the seed user's) books and chats. No password, so it
+// can't be logged into again once the session cookie expires.
+export const guestLogin: RequestHandler = async (_, res, next) => {
+  try {
+    const code = crypto.randomBytes(2).toString("hex").toUpperCase();
+    const user = await User.create({
+      first_name: "Guest",
+      last_name: code,
+      email: `guest-${crypto.randomBytes(6).toString("hex")}@guest.invalid`,
+      role: "INDIVIDUAL",
+    }).save();
+    await Auth.create({ user }).save();
+    createAndSendToken(user, 200, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const logout: RequestHandler = (_, res) => {
   const cookieOptions: CookieOptions = {
     expires: new Date(),
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
-    sameSite: "none",
+    sameSite: "lax",
   };
   res.cookie("jwt", "", cookieOptions);
   res.sendStatus(200);
@@ -108,7 +128,12 @@ export const protect =
         new AppError("You are not logged in. Please login to get access.", 401)
       );
 
-    const parsed = jwt.verify(token, process.env.JWT_SECRET) as { id: number };
+    let parsed: { id: number };
+    try {
+      parsed = jwt.verify(token, process.env.JWT_SECRET) as { id: number };
+    } catch {
+      return next(new AppError("Session is invalid or expired.", 401));
+    }
 
     const user = await User.findOne(parsed.id);
 

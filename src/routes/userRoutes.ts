@@ -5,6 +5,7 @@ import {
   logout,
   protect,
   isLoggedIn,
+  guestLogin,
 } from "../controllers/authController";
 
 import {
@@ -18,6 +19,8 @@ const userRouter = Router();
 userRouter.post("/register", register);
 
 userRouter.post("/login", login);
+
+userRouter.post("/guest", guestLogin);
 
 userRouter.post("/logout", logout);
 

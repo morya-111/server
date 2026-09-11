@@ -13,6 +13,6 @@ const bookRouter = Router();
 
 bookRouter.get("/mybooks", protect(), getAllBooksByLoggedInUser);
 bookRouter.get("/", getAllBooks).get("/:id", getBookById);
-bookRouter.post("/", protect(), newBook).delete("/:id", deleteBook);
+bookRouter.post("/", protect(), newBook).delete("/:id", protect(), deleteBook);
 
 export default bookRouter;

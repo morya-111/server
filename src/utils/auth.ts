@@ -2,12 +2,15 @@ import { CookieOptions, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../entity/User";
 
-const {  FRONTEND_CLIENT = "http://localhost:3000" } =
-  process.env;
+// Days. Defaults keep cookie `expires` valid when the env vars are unset.
+const JWT_EXPIRES_IN = parseInt(process.env.JWT_EXPIRES_IN || "7");
+const JWT_COOKIE_EXPIRES_IN = parseInt(
+	process.env.JWT_COOKIE_EXPIRES_IN || process.env.JWT_EXPIRES_IN || "7"
+);
 
 export const signToken = (id: number) =>
 	jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: parseInt(process.env.JWT_EXPIRES_IN) * 24 * 60 * 60 * 1000,
+		expiresIn: `${JWT_EXPIRES_IN}d`,
 	});
 
 export const createAndSendToken = (
@@ -20,12 +23,12 @@ export const createAndSendToken = (
 
 	const cookieOptions: CookieOptions = {
 		expires: new Date(
-			Date.now() +
-				parseInt(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000
+			Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
 		),
 		httpOnly: true,
 		secure: process.env.NODE_ENV !== "development",
-		sameSite : "none",
+		// client and API share an origin (Vercel rewrite / CRA proxy)
+		sameSite: "lax",
 	};
 
 	res.cookie("jwt", token, cookieOptions);

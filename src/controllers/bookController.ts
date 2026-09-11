@@ -161,13 +161,20 @@ export const getAllBooksByLoggedInUser: RequestHandler = async (
 };
 
 export const deleteBook: RequestHandler = async (req, res, next) => {
-  const bookId = req.params.id;
+  const bookId = parseInt(req.params.id);
+  const currentUser = req.user as any;
 
-  const bookDel = await Book.delete(bookId);
-  console.log(bookDel);
-  if (bookDel.affected == 0) {
+  const book = Number.isInteger(bookId)
+    ? await Book.findOne(bookId, { relations: ["user"] })
+    : undefined;
+  if (!book) {
     return next(new AppError("Book with that ID doesn't exist.", 404));
   }
+  if (book.user?.id !== currentUser.id && currentUser.role !== "ADMIN") {
+    return next(new AppError("You can only delete your own books.", 403));
+  }
+
+  await Book.delete(bookId);
 
   res.status(200).json({
     msg: "success",

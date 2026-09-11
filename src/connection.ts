@@ -1,8 +1,24 @@
-import { createConnection, getConnection } from "typeorm";
+import { Connection, createConnection, getConnection, getConnectionManager } from "typeorm";
+import dbConfig from "./dbConfig";
+
+let pending: Promise<Connection> | null = null;
 
 const connection = {
   async create() {
-    await createConnection();
+    await createConnection(dbConfig);
+  },
+
+  // Idempotent: reuses the connection across requests on a warm instance.
+  async ensure() {
+    const manager = getConnectionManager();
+    if (manager.has("default") && manager.get("default").isConnected) return;
+    if (!pending) {
+      pending = createConnection(dbConfig).catch((err) => {
+        pending = null;
+        throw err;
+      });
+    }
+    await pending;
   },
 
   async close() {
